@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI UserbalanceText;
 
     public UserData userData;
-
+    
     public static GameManager instance;
 
     private void Awake()
