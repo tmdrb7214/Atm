@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
     public UserData userData;
     
     public static GameManager instance;
-
     private void Awake()
     {
         if (instance == null)
@@ -32,13 +31,11 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        userData = new UserData("¹Ú½Â±Ô", 50000, 100000);
-    }
-
-    private void FixedUpdate()
-    {
+        Json json = new Json();
+        userData = json.LoadData();
         Refresh();
     }
+
     public void Refresh()
     {
         Usernametext.text = userData.UserName;
