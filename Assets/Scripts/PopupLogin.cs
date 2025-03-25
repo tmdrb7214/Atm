@@ -43,26 +43,27 @@ public class PopupLogin : MonoBehaviour
     private void Start()
     {
         savePath = Application.persistentDataPath;
+        LoadData();
     }
 
     public void Login()
     {
-        if (File.Exists(savePath))
+        string[] files = Directory.GetFiles(savePath, "*.json");
+        if (files.Length > 0)
         {
-            string json = File.ReadAllText(savePath);
-            UserData loadData = JsonUtility.FromJson<UserData>(json);
-            if (LoginID.text == loadData.ID && LoginPassword.text == loadData.Password)
+            foreach (string file in files)
             {
-                GameManager.instance.userData = loadData;
-                gameObject.SetActive(false);
-                mainUI.SetActive(true);
-            }
-            else
-            {
-                Debug.Log("Login Failed");
+                string json = File.ReadAllText(file);
+                UserData loadData = JsonUtility.FromJson<UserData>(json);
+                if (LoginID.text == loadData.ID && LoginPassword.text == loadData.Password)
+                {
+                    GameManager.instance.userData = loadData;
+                    gameObject.SetActive(false);
+                    mainUI.SetActive(true);
+                    GameManager.instance.Refresh();
+                }
             }
         }
-        GameManager.instance.Refresh();
         ClearInputFields();
     }
 
@@ -85,14 +86,15 @@ public class PopupLogin : MonoBehaviour
             Error.SetActive(true);
             return;
         }
-
-        if(File.Exists(savePath))
+        string[] files = Directory.GetFiles(savePath, "*.json");
+        foreach (string file in files) 
         {
-            string json = File.ReadAllText(savePath);
+            string json = File.ReadAllText(file);
             UserData loadedData = JsonUtility.FromJson<UserData>(json);
             if (loadedData.ID == id)
             {
                 Debug.Log("이미 가입된 아이디가 있습니다.");
+                Error.SetActive(true);
                 return;
             }
         }
@@ -100,7 +102,7 @@ public class PopupLogin : MonoBehaviour
         Cancel();
     }
 
-    private void SaveUserData(string id, string password , string name , int cash , int balnace)
+    public void SaveUserData(string id, string password , string name , int cash , int balnace)
     {
         savePath = $"{Application.persistentDataPath}/{name}.json";
         UserData userData = new UserData(id ,password , name, cash , balnace);
@@ -108,21 +110,27 @@ public class PopupLogin : MonoBehaviour
         File.WriteAllText(savePath, json);
         Debug.Log(savePath);
     }
-    private UserData LoadData(string name)
+    private UserData LoadData()
     {
-        savePath = $"{Application.persistentDataPath}/{name}.json";
-        if (!File.Exists(savePath))
-        {
-            Debug.Log("데이터없음") ; return null;
+        string[] files = Directory.GetFiles(savePath,"*.json");
+
+        if (files.Length == 0) 
+        { 
+            Debug.Log("데이터 없음") ; return null;
         }
-        string json = File.ReadAllText(savePath);
+        string json = File.ReadAllText(files[0]);
+
         UserData userData = JsonUtility.FromJson<UserData>(json);
-        if (userData != null)
+
+        if(userData != null)
         {
-            Debug.Log(userData.UserName);
+            Debug.Log("파일 갯수 " + files.Length);
+            for (int i = 0; i < files.Length; i++)
+            {
+                Debug.Log(files[i]);
+            }
             return userData;
         }
-
         Debug.Log("유저데이터 없음") ; return null;
     }
 

@@ -85,7 +85,7 @@ public class PopupBank : MonoBehaviour
     public void OnDeposit(int amount)
     {
         UserData userData = GameManager.instance.userData;
-        //Json json = new Json();
+        PopupLogin popupLogin = new PopupLogin();
         if (DepositinputField.text != "")
         {
             amount = int.Parse(DepositinputField.text);
@@ -99,7 +99,6 @@ public class PopupBank : MonoBehaviour
         userData.UserBalance += amount;
         DepositinputField.text = "";
         GameManager.instance.Refresh();
-        //json.SaveData(userData);
     }
 
     public void OnWithdraw(int amount)
@@ -119,7 +118,6 @@ public class PopupBank : MonoBehaviour
         userData.UserCash += amount;
         WithdrawinputField.text = "";
         GameManager.instance.Refresh();
-        //json.SaveData(userData);
     }
 }
 
