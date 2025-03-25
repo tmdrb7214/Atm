@@ -14,13 +14,7 @@ public class PopupBank : MonoBehaviour
     [SerializeField] private TMP_InputField DepositinputField;
     [SerializeField] private TMP_InputField WithdrawinputField;
 
-    public enum UIType
-    {
-        USerInfo,
-        Deposit,
-        Withdraw,
-        Popup
-    }
+
     private void Awake()
     {
         for (int i = 0; i < button.Length; i++)
@@ -85,7 +79,6 @@ public class PopupBank : MonoBehaviour
     public void OnDeposit(int amount)
     {
         UserData userData = GameManager.instance.userData;
-        PopupLogin popupLogin = new PopupLogin();
         if (DepositinputField.text != "")
         {
             amount = int.Parse(DepositinputField.text);
@@ -99,6 +92,7 @@ public class PopupBank : MonoBehaviour
         userData.UserBalance += amount;
         DepositinputField.text = "";
         GameManager.instance.Refresh();
+        SaveUserData();
     }
 
     public void OnWithdraw(int amount)
@@ -118,6 +112,15 @@ public class PopupBank : MonoBehaviour
         userData.UserCash += amount;
         WithdrawinputField.text = "";
         GameManager.instance.Refresh();
+        //json.SaveData(userData);
+        SaveUserData();
+    }
+
+    public void SaveUserData()
+    {
+        UserData userData = GameManager.instance.userData;
+        PopupLogin popupLogin = new PopupLogin();
+        popupLogin.SaveUserData(userData.ID , userData.Password , userData.UserName , userData.UserCash , userData.UserBalance);
     }
 }
 

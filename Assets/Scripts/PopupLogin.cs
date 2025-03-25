@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.IO;
+using Unity.VisualScripting;
 
 public class PopupLogin : MonoBehaviour
 {
@@ -39,12 +40,12 @@ public class PopupLogin : MonoBehaviour
         SignUpButton.onClick.AddListener(OnSignUpButtonClick);
         CancelError.onClick.AddListener(() => Error.SetActive(false));
     }
-
     private void Start()
     {
         savePath = Application.persistentDataPath;
         LoadData();
     }
+
 
     public void Login()
     {
@@ -53,6 +54,7 @@ public class PopupLogin : MonoBehaviour
         {
             foreach (string file in files)
             {
+                Debug.Log(file);
                 string json = File.ReadAllText(file);
                 UserData loadData = JsonUtility.FromJson<UserData>(json);
                 if (LoginID.text == loadData.ID && LoginPassword.text == loadData.Password)
@@ -61,6 +63,12 @@ public class PopupLogin : MonoBehaviour
                     gameObject.SetActive(false);
                     mainUI.SetActive(true);
                     GameManager.instance.Refresh();
+                    return;
+                }
+                else if(LoginID.text != loadData.ID || LoginPassword.text != loadData.Password)
+                {
+                    Debug.Log("faild Login");
+                    Error.SetActive(true);
                 }
             }
         }
@@ -100,6 +108,7 @@ public class PopupLogin : MonoBehaviour
         }
         SaveUserData(id, password, name , 10000 ,5000);
         Cancel();
+        Debug.Log(files);
     }
 
     public void SaveUserData(string id, string password , string name , int cash , int balnace)
@@ -110,7 +119,7 @@ public class PopupLogin : MonoBehaviour
         File.WriteAllText(savePath, json);
         Debug.Log(savePath);
     }
-    private UserData LoadData()
+    public UserData LoadData()
     {
         string[] files = Directory.GetFiles(savePath,"*.json");
 
@@ -138,6 +147,7 @@ public class PopupLogin : MonoBehaviour
     {
         SignUI.SetActive(true);
         LoginUI.SetActive(false);
+        ClearInputFields();
     }
 
     public void Cancel()

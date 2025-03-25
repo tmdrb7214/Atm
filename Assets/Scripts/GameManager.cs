@@ -35,5 +35,6 @@ public class GameManager : MonoBehaviour
         Usernametext.text = userData.UserName;
         Usercashtext.text = string.Format("{0:N0}", userData.UserCash);
         UserbalanceText.text = string.Format("{0:N0}", userData.UserBalance);
+
     }
 }
