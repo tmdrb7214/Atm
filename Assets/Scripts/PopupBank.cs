@@ -13,6 +13,8 @@ public class PopupBank : MonoBehaviour
     [SerializeField] private GameObject[] UI;
     [SerializeField] private TMP_InputField DepositinputField;
     [SerializeField] private TMP_InputField WithdrawinputField;
+    [SerializeField] private TMP_InputField RemittanceName;
+    [SerializeField] private TMP_InputField RemittanceinputField;
 
 
     private void Awake()
@@ -112,9 +114,35 @@ public class PopupBank : MonoBehaviour
         userData.UserCash += amount;
         WithdrawinputField.text = "";
         GameManager.instance.Refresh();
-        //json.SaveData(userData);
         SaveUserData();
     }
+
+    //public void OnRemittance(int amount)
+    //{
+    //    UserData userData = GameManager.instance.userData;
+
+    //    string receiverName = RemittanceName.text;
+
+    //    if(RemittanceName.text != "")
+    //    {
+
+    //    }
+
+    //    if (RemittanceinputField.text != "")
+    //    {
+    //        amount = int.Parse(RemittanceinputField.text);
+    //    }
+    //    if (userData.UserBalance - amount < 0)
+    //    {
+    //        UI[3].SetActive(true);
+    //        return;
+    //    }
+    //    userData.UserBalance -= amount;
+
+    //    WithdrawinputField.text = "";
+    //    GameManager.instance.Refresh();
+    //    SaveUserData();
+    //}
 
     public void SaveUserData()
     {
