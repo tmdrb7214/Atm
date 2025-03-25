@@ -14,8 +14,6 @@ public class PopupLogin : MonoBehaviour
     [SerializeField] private TMP_InputField SignPassword;
     [SerializeField] private TMP_InputField SignPasswordConfirm;
 
-
-
     [SerializeField] private Button LoginButton;
     [SerializeField] private Button SignButton;
     [SerializeField] private Button CancelButton;
@@ -47,16 +45,11 @@ public class PopupLogin : MonoBehaviour
         savePath = Application.persistentDataPath;
     }
 
-    private void Update()
-    {
-        CheckSign();
-    }
     public void Login()
     {
-        string path = $"{Application.persistentDataPath}/{name}.json";
         if (File.Exists(savePath))
         {
-            string json = File.ReadAllText(path);
+            string json = File.ReadAllText(savePath);
             UserData loadData = JsonUtility.FromJson<UserData>(json);
             if (LoginID.text == loadData.ID && LoginPassword.text == loadData.Password)
             {
@@ -69,6 +62,7 @@ public class PopupLogin : MonoBehaviour
                 Debug.Log("Login Failed");
             }
         }
+        GameManager.instance.Refresh();
         ClearInputFields();
     }
 
@@ -78,7 +72,7 @@ public class PopupLogin : MonoBehaviour
         string name = SignName.text;
         string password = SignPassword.text;
         string passwordConfirm = SignPasswordConfirm.text;
-
+        CheckSign();
         if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(passwordConfirm))
         {
             Debug.Log("빈칸을 채워주세요");
@@ -102,22 +96,35 @@ public class PopupLogin : MonoBehaviour
                 return;
             }
         }
-        ClearInputFields();
-        SaveUserData(id, password, name , 0 ,0);
+        SaveUserData(id, password, name , 10000 ,5000);
         Cancel();
     }
-
 
     private void SaveUserData(string id, string password , string name , int cash , int balnace)
     {
         savePath = $"{Application.persistentDataPath}/{name}.json";
-
         UserData userData = new UserData(id ,password , name, cash , balnace);
         string json = JsonUtility.ToJson(userData,true);
         File.WriteAllText(savePath, json);
-        GameManager.instance.userData = userData;
+        Debug.Log(savePath);
     }
+    private UserData LoadData(string name)
+    {
+        savePath = $"{Application.persistentDataPath}/{name}.json";
+        if (!File.Exists(savePath))
+        {
+            Debug.Log("데이터없음") ; return null;
+        }
+        string json = File.ReadAllText(savePath);
+        UserData userData = JsonUtility.FromJson<UserData>(json);
+        if (userData != null)
+        {
+            Debug.Log(userData.UserName);
+            return userData;
+        }
 
+        Debug.Log("유저데이터 없음") ; return null;
+    }
 
     public void Sign()
     {
@@ -129,6 +136,7 @@ public class PopupLogin : MonoBehaviour
     {
         SignUI.SetActive(false);
         LoginUI.SetActive(true);
+        ClearInputFields();
     }
 
     public void CheckSign()
@@ -167,4 +175,5 @@ public class PopupLogin : MonoBehaviour
         LoginID.text = "";
         LoginPassword.text = "";
     }
+
 }
