@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public UserData userData;
     
     public static GameManager instance;
+
     private void Awake()
     {
         if (instance == null)
@@ -31,8 +32,6 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        Json json = new Json();
-        userData = json.LoadData();
         Refresh();
     }
 

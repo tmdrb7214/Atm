@@ -7,14 +7,18 @@ using UnityEngine;
 [Serializable]
 public class UserData
 {
+    public string ID;
+    public string Password;   
     public string UserName;
     public int UserCash;
     public int UserBalance;
-    public UserData(string userName, int userCash, int userBalance)
+    public UserData(string iD, string password, string userName, int userCash, int userBalance)
     {
-        UserName = userName;
-        UserCash = userCash;
-        UserBalance = userBalance;
+        this.ID = iD;
+        this.Password = password;
+        this.UserName = userName;
+        this.UserCash = userCash;
+        this.UserBalance = userBalance;
     }
 }
 
