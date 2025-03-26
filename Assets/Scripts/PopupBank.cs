@@ -26,10 +26,6 @@ public class PopupBank : MonoBehaviour
             button[buttonIndex].onClick.AddListener(() => OnClick(buttonIndex));
         }
     }
-    private void Start()
-    {
-        
-    }
 
     private void OnClick(int buttonIndex)
     {
@@ -89,6 +85,16 @@ public class PopupBank : MonoBehaviour
             case 15:
                 OnRemittance(0);
                 break;
+            case 16:
+                UI[6].SetActive(false);
+                UI[0].SetActive(true);
+                break;
+            case 17:
+                UI[9].SetActive(false);
+                break;
+            case 18:
+                UI[7].SetActive(false);
+                break;
         }
     }
     public void OnDeposit(int amount)
@@ -132,8 +138,18 @@ public class PopupBank : MonoBehaviour
     public void OnRemittance(int amount)
     {
         UserData userData = GameManager.instance.userData;
+        if (string.IsNullOrEmpty(RemittanceinputField.text) && string.IsNullOrEmpty(RemittanceName.text))
+        {
+            UI[9].SetActive(true);
+            return;
+        }
+        if(string.IsNullOrEmpty(RemittanceName.text) && (!string.IsNullOrEmpty(RemittanceinputField.text)))
+        {
+            UI[7].SetActive(true);
+            return;
+        }
 
-        if (RemittanceinputField.text != "")
+        if (!string.IsNullOrEmpty(RemittanceinputField.text))
         {
             amount = int.Parse(RemittanceinputField.text);
         }
@@ -142,29 +158,27 @@ public class PopupBank : MonoBehaviour
             UI[3].SetActive(true);
             return;
         }
-        if (RemittanceinputField == null || RemittanceName == null)
+
+        if ((!string.IsNullOrEmpty(RemittanceinputField.text)) && (!string.IsNullOrEmpty(RemittanceName.text)))
         {
-            UI[3].SetActive(true);
-            return;
+            string receiverName = RemittanceName.text;
+            UserData receiver = PopupLogin.instance.SelecUserData(receiverName);
+
+            userData.UserBalance -= amount;
+            receiver.UserBalance += amount;
+            Debug.Log($"{receiver.UserName} -> {amount}");
+            WithdrawinputField.text = "";
+            GameManager.instance.Refresh();
+            PopupLogin.instance.SaveUserData(receiver);
+            SaveUserData();
         }
-        string receiverName = RemittanceName.text;
-        UserData receiver = PopupLogin.instance.SelecUserData(receiverName);
-
-
-        userData.UserBalance -= amount;
-        receiver.UserBalance += amount;
-        Debug.Log($"{receiver.UserName} -> {amount}");
-        WithdrawinputField.text = "";
-        GameManager.instance.Refresh();
-        PopupLogin.instance.SaveUserData(receiver.ID, receiver.Password, receiver.UserName, receiver.UserCash, receiver.UserBalance);
-        SaveUserData();
     }
 
     public void SaveUserData()
     {
         UserData userData = GameManager.instance.userData;
         PopupLogin popupLogin = new PopupLogin();
-        popupLogin.SaveUserData(userData.ID , userData.Password , userData.UserName , userData.UserCash , userData.UserBalance);
+        popupLogin.SaveUserData(userData);
     }
 }
 

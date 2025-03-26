@@ -62,24 +62,37 @@ public class PopupLogin : MonoBehaviour
         string[] files = Directory.GetFiles(savePath, "*.json");
         if (files.Length > 0)
         {
+            bool login = false;
+
             foreach (string file in files)
             {
                 Debug.Log(file);
                 string json = File.ReadAllText(file);
                 UserData loadData = JsonUtility.FromJson<UserData>(json);
+
                 if (LoginID.text == loadData.ID && LoginPassword.text == loadData.Password)
                 {
                     GameManager.instance.userData = loadData;
                     gameObject.SetActive(false);
                     mainUI.SetActive(true);
                     GameManager.instance.Refresh();
+                    login = true;
                     break;
                 }
-                else
-                {
-                    Debug.Log("faild Login");
-                    Error.SetActive(true);
-                }
+                //if (LoginID.text == loadData.ID)
+                //{
+                //    if (LoginPassword.text == loadData.Password)
+                //    {
+                //        GameManager.instance.userData = loadData;
+                //        gameObject.SetActive(false);
+                //        mainUI.SetActive(true);
+                //        GameManager.instance.Refresh();
+                //    }
+                //}
+            }
+            if (!login)
+            {
+                Error.SetActive(true);
             }
         }
         ClearInputFields();
@@ -116,16 +129,15 @@ public class PopupLogin : MonoBehaviour
                 return;
             }
         }
-        SaveUserData(id, password, name , 10000 ,5000);
+        SaveUserData(new UserData(id, password, name , 10000 ,5000));
         Cancel();
         Debug.Log(files);
     }
 
-    public void SaveUserData(string id, string password, string name, int cash, int balnace)
+    public void SaveUserData(UserData userdata)
     {
-        savePath = $"{Application.persistentDataPath}/{name}.json";
-        UserData userData = new UserData(id, password, name, cash, balnace);
-        string json = JsonUtility.ToJson(userData, true);
+        savePath = $"{Application.persistentDataPath}/{userdata.UserName}.json";
+        string json = JsonUtility.ToJson(userdata, true);
         File.WriteAllText(savePath, json);
         Debug.Log(savePath);
     }
